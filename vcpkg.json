@@ -1,0 +1,11 @@
+{
+  "dependencies": [
+    {
+      "name": "google-cloud-cpp",
+      "default-features": false,
+      "features": [
+        "oauth2"
+      ]
+    }
+  ]
+}
