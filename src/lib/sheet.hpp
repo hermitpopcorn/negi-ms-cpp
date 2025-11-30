@@ -1,16 +1,12 @@
 #pragma once
 
-#include <memory>
+#include "lib/network.hpp"
 
 namespace sheet
 {
-	class Client {
-		private:
-			struct Token;
-			std::unique_ptr<Token> mp_token;
-			void getToken();
-		public:
-			Client();
-			~Client();
+	class ClientInterface
+	{
+	public:
+		virtual std::string getSheetData() = 0;
 	};
 }

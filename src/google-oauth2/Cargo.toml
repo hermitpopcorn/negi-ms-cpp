@@ -1,0 +1,8 @@
+[package]
+name = "google-oauth2"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tokio = "1.48.0"
+yup-oauth2 = "12.1.1"

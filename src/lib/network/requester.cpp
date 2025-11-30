@@ -1,0 +1,62 @@
+#include <string>
+#include <sstream>
+#include <curl/curl.h>
+#include "lib/network/requester.hpp"
+
+static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+    size_t real_size = size * nmemb;
+
+    std::stringstream *ss = static_cast<std::stringstream *>(userp);
+    ss->write(static_cast<char *>(contents), real_size);
+
+    return real_size;
+}
+
+namespace network
+{
+    Requester::Requester()
+    {
+        curl_global_init(CURL_GLOBAL_DEFAULT);
+    }
+
+    Requester::~Requester()
+    {
+    }
+
+    std::string Requester::getRequest(std::string url, std::vector<std::string> headers)
+    {
+        CURL *curlHandle = curl_easy_init();
+
+        if (!curlHandle)
+        {
+            throw std::runtime_error("could not initialize curl handle");
+        }
+
+        struct curl_slist *curlHeaders = nullptr;
+        for (auto &header : headers)
+        {
+            curlHeaders = curl_slist_append(curlHeaders, header.c_str());
+        }
+
+        curl_easy_setopt(curlHandle, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curlHandle, CURLOPT_HTTPHEADER, curlHeaders);
+        curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, writeCallback);
+        curl_easy_setopt(curlHandle, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_1_1);
+        std::stringstream response;
+        curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &response);
+        CURLcode res = curl_easy_perform(curlHandle);
+
+        curl_slist_free_all(curlHeaders);
+        curl_easy_cleanup(curlHandle);
+
+        if (res != CURLE_OK)
+        {
+            std::string errorMessage = "curl failed: ";
+            errorMessage.append(curl_easy_strerror(res));
+            throw std::runtime_error(errorMessage);
+        }
+
+        return response.str();
+    }
+}
