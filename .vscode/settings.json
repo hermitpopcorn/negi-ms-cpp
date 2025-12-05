@@ -78,5 +78,6 @@
     "editor.formatOnSave": true,
     "rust-analyzer.linkedProjects": [
         "src/google-oauth2/Cargo.toml"
-    ]
+    ],
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }

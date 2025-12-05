@@ -1,0 +1,15 @@
+{
+    "tasks": [
+        {
+            "label": "Build Project",
+            "type": "shell",
+            "command": "mkdir -p ./build && cmake -B build --preset vcpkg -DCMAKE_BUILD_TYPE=Debug && cmake --build build && pushd src/google-oauth2 && cargo build --release && popd && cp src/google-oauth2/target/release/google-oauth2 ./build/",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ],
+    "version": "2.0.0"
+}

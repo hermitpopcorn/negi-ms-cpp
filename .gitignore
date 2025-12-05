@@ -1,3 +1,4 @@
 .env
+service-account.json
 build/
 vcpkg_installed/
