@@ -18,6 +18,6 @@ namespace sheet
         Client(std::shared_ptr<network::RequesterInterface> p_requester);
         ~Client();
 
-        std::string getSheetData() override;
+        std::vector<Transaction> getTransactions() override;
     };
 }

@@ -59,4 +59,50 @@ namespace network
 
         return response.str();
     }
+
+    std::string Requester::postRequest(std::string url, std::vector<std::string> headers, std::string body)
+    {
+        CURL *curlHandle = curl_easy_init();
+
+        if (!curlHandle)
+        {
+            throw std::runtime_error("could not initialize curl handle");
+        }
+
+        struct curl_slist *curlHeaders = nullptr;
+        for (auto &header : headers)
+        {
+            curlHeaders = curl_slist_append(curlHeaders, header.c_str());
+        }
+
+        curl_easy_setopt(curlHandle, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curlHandle, CURLOPT_HTTPHEADER, curlHeaders);
+        curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, writeCallback);
+        curl_easy_setopt(curlHandle, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_1_1);
+        curl_easy_setopt(curlHandle, CURLOPT_POSTFIELDS, body.c_str());
+        std::stringstream response;
+        curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &response);
+        CURLcode res = curl_easy_perform(curlHandle);
+
+        int responseHttpCode;
+        curl_easy_getinfo(curlHandle, CURLINFO_RESPONSE_CODE, &responseHttpCode);
+
+        curl_slist_free_all(curlHeaders);
+        curl_easy_cleanup(curlHandle);
+
+        if (res != CURLE_OK)
+        {
+            std::string errorMessage = "curl failed: ";
+            errorMessage.append(curl_easy_strerror(res));
+            throw std::runtime_error(errorMessage);
+        }
+
+        if (responseHttpCode != 200)
+        {
+            std::string errorMessage = "request failed: " + std::to_string(responseHttpCode);
+            throw std::runtime_error(errorMessage);
+        }
+
+        return response.str();
+    }
 }

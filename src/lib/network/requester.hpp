@@ -11,5 +11,6 @@ namespace network
         ~Requester();
 
         std::string getRequest(std::string url, std::vector<std::string> headers) override;
+        std::string postRequest(std::string url, std::vector<std::string> headers, std::string body) override;
     };
 }
