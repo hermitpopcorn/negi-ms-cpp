@@ -73,7 +73,7 @@ namespace sheet
 		if (serviceFilePath == nullptr)
 			throw std::runtime_error("credentials file is unset");
 
-		std::string test_command = "./google-oauth2 " + std::string(serviceFilePath) + " https://www.googleapis.com/auth/spreadsheets";
+		std::string test_command = "google-oauth2 " + std::string(serviceFilePath) + " https://www.googleapis.com/auth/spreadsheets";
 		std::pair<int, std::string> result = execExternal(test_command);
 		if (result.first != EXEC_OK)
 		{

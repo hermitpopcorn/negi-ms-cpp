@@ -9,13 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/reporter",
-            "cwd": "${workspaceFolder}/build",
-            "environment": [
-                {
-                    "name": "GOOGLE_APPLICATION_CREDENTIALS",
-                    "value": "${workspaceFolder}/service-account.json"
-                }
-            ],
+            "cwd": "${workspaceFolder}",
             "MIMode": "gdb",
             "preLaunchTask": "Build Project",
             "setupCommands": [
