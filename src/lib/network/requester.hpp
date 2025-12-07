@@ -10,7 +10,7 @@ namespace network
         Requester();
         ~Requester();
 
-        std::string getRequest(std::string url, std::vector<std::string> headers) override;
-        std::string postRequest(std::string url, std::vector<std::string> headers, std::string body) override;
+        std::string getRequest(const std::string &url, const std::vector<std::string> &headers) override;
+        std::string postRequest(const std::string &url, const std::vector<std::string> &headers, const std::string &body) override;
     };
 }

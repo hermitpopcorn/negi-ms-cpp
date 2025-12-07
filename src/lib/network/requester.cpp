@@ -24,7 +24,7 @@ namespace network
     {
     }
 
-    std::string Requester::getRequest(std::string url, std::vector<std::string> headers)
+    std::string Requester::getRequest(const std::string &url, const std::vector<std::string> &headers)
     {
         CURL *curlHandle = curl_easy_init();
 
@@ -60,7 +60,7 @@ namespace network
         return response.str();
     }
 
-    std::string Requester::postRequest(std::string url, std::vector<std::string> headers, std::string body)
+    std::string Requester::postRequest(const std::string &url, const std::vector<std::string> &headers, const std::string &body)
     {
         CURL *curlHandle = curl_easy_init();
 
