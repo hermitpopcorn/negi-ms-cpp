@@ -1,5 +1,3 @@
-#include <stdexcept>
-#include <array>
 #include <nlohmann/json.hpp>
 #include <cmath>
 #include "lib/sheet/client.hpp"
@@ -11,8 +9,8 @@ namespace sheet
 		std::string accessToken;
 	};
 
-	Client::Client(std::shared_ptr<network::RequesterInterface> p_requester)
-		: mp_requester(std::move(p_requester)), mp_token(nullptr)
+	Client::Client(std::shared_ptr<network::RequesterInterface> p_requester, std::shared_ptr<external::ExecInterface> p_exec)
+		: mp_requester(std::move(p_requester)), mp_exec(std::move(p_exec)), mp_token(nullptr)
 	{
 		if (mp_requester == nullptr)
 		{
@@ -35,54 +33,9 @@ namespace sheet
 		}
 	}
 
-#define EXEC_OK (0)
-	std::pair<int, std::string> execExternal(const std::string &command)
-	{
-		// redirect stderr to stdout
-		std::string realCommand = command + " 2>&1";
-
-		std::string output = "";
-		int waitStatus = -1;
-
-		FILE *pipe = popen(realCommand.c_str(), "r");
-		if (!pipe)
-		{
-			throw std::runtime_error("popen() failed");
-		}
-
-		std::array<char, 128> buffer;
-		try
-		{
-			while (fgets(buffer.data(), buffer.size(), pipe) != nullptr)
-			{
-				output += buffer.data();
-			}
-
-			waitStatus = pclose(pipe);
-		}
-		catch (...)
-		{
-			pclose(pipe);
-			throw;
-		}
-
-		return {waitStatus, output};
-	}
-
 	void Client::getToken()
 	{
-		char *serviceFilePath = std::getenv("GOOGLE_APPLICATION_CREDENTIALS");
-		if (serviceFilePath == nullptr)
-			throw std::runtime_error("credentials file is unset");
-
-		std::string test_command = "google-oauth2 " + std::string(serviceFilePath) + " https://www.googleapis.com/auth/spreadsheets";
-		std::pair<int, std::string> result = execExternal(test_command);
-		if (result.first != EXEC_OK)
-		{
-			throw std::runtime_error("oauth2 failed (" + std::to_string(result.first) + "): " + result.second);
-		}
-
-		mp_token = new Token{result.second};
+		mp_token = new Token{mp_exec->googleOAuth("https://www.googleapis.com/auth/spreadsheets")};
 	}
 
 	std::vector<Transaction> Client::getTransactions()

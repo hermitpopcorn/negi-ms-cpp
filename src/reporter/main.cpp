@@ -6,6 +6,7 @@
 
 #include "lib/network/requester.hpp"
 #include "lib/sheet/client.hpp"
+#include "lib/external/exec.hpp"
 #include "discord.hpp"
 
 int main(int argc, char *argv[])
@@ -32,7 +33,8 @@ int main(int argc, char *argv[])
 
         // Get transactions
         auto requester = std::make_shared<network::Requester>();
-        sheet::Client client(requester);
+        auto exec = std::make_shared<external::ShellExec>();
+        sheet::Client client(requester, exec);
         auto transactions = client.getTransactions();
 
         // Sort (newest first)
