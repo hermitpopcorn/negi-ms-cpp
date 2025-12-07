@@ -15,3 +15,13 @@ add_executable(reporter ${reporter_FILES})
 target_include_directories(reporter PUBLIC "src/")
 target_link_libraries(reporter PRIVATE commonlib)
 target_link_libraries(reporter PRIVATE curl nlohmann_json::nlohmann_json)
+
+# test
+enable_testing()
+file(GLOB_RECURSE tests_FILES "test/*.cpp")
+add_executable(tests ${tests_FILES})
+target_include_directories(tests PUBLIC "src/")
+target_include_directories(tests PUBLIC "test/")
+target_link_libraries(tests PRIVATE commonlib)
+find_package(GTest CONFIG REQUIRED)
+target_link_libraries(tests PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)

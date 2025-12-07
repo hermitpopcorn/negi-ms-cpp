@@ -24,6 +24,15 @@
                     "ignoreFailures": true
                 }
             ]
-        }
+        },
+        {
+            "name": "(gdb) Attach to test",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/tests",
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "preLaunchTask": "Build Project",
+        },
     ]
 }
