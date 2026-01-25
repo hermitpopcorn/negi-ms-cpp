@@ -9,6 +9,20 @@ namespace sheet
 		std::string accessToken;
 	};
 
+	static std::chrono::system_clock::time_point googleSheetsDateTimeToTimePoint(const double googleSheetsValue)
+	{
+		double integral = 0;
+		double fraction = modf(googleSheetsValue, &integral);
+
+		// Google Sheets uses 1899-12-30 as Day 0
+		// 1899-12-30 to 1970-1-1 = 25569 days
+		int daysSinceEpoch = integral - 25569;
+		int minutes = fraction * (24 * 60);
+
+		auto sinceEpoch = std::chrono::hours(daysSinceEpoch * 24) + std::chrono::minutes(minutes);
+		return std::chrono::time_point<std::chrono::system_clock>(sinceEpoch);
+	}
+
 	Client::Client(std::shared_ptr<network::RequesterInterface> p_requester, std::shared_ptr<external::ExecInterface> p_exec)
 		: mp_requester(std::move(p_requester)), mp_exec(std::move(p_exec)), mp_token(nullptr)
 	{
@@ -70,18 +84,7 @@ namespace sheet
 			nlohmann::json json = nlohmann::json::parse(jsonString);
 			for (auto &v : json["values"])
 			{
-				double d = v[2];
-				double integral = 0;
-				double fraction = modf(d, &integral);
-
-				// Google Sheets uses 1899-12-30 as Day 0
-				// 1899-12-30 to 1970-1-1 = 25569 days
-				int daysSinceEpoch = integral - 25569;
-
-				int minutes = fraction * (24 * 60);
-
-				auto sinceEpoch = std::chrono::hours(daysSinceEpoch * 24) + std::chrono::minutes(minutes);
-				auto date = std::chrono::time_point<std::chrono::system_clock>(sinceEpoch);
+				auto date = googleSheetsDateTimeToTimePoint(v[2]);
 
 				auto getString = [](nlohmann::json &i) -> std::string
 				{
