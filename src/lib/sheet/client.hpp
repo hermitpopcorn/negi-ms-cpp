@@ -21,5 +21,7 @@ namespace sheet
         ~Client();
 
         std::vector<Transaction> getTransactions() override;
+        void markDuplicatesInSheet(const std::vector<TransactionRow> &transactionRows) override;
+        void setCategoriesInSheet(const std::vector<TransactionRow> &transactionRows) override;
     };
 }

@@ -125,4 +125,86 @@ namespace sheet
 
 		return parseJsonString(response);
 	}
+
+	void Client::markDuplicatesInSheet(const std::vector<TransactionRow> &transactionRows)
+	{
+		if (mp_requester == nullptr)
+		{
+			throw std::runtime_error("requester is null");
+		}
+
+		if (mp_token == nullptr)
+		{
+			throw std::runtime_error("token is null");
+		}
+
+		std::string spreadsheetId = "1cK1dA50bW6_AyRA2ScDozwVg3IB_lHwBIP1xAqNwjXw";
+
+		for (const auto &trxRow : transactionRows)
+		{
+			// Update subject (column B)
+			{
+				std::string range = "Transactions!B" + std::to_string(trxRow.row) + ":B" + std::to_string(trxRow.row);
+				std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" + spreadsheetId + "/values/" + range + "?valueInputOption=USER_ENTERED&includeValuesInResponse=0";
+
+				std::vector<std::string> headers;
+				headers.push_back("Authorization: Bearer " + mp_token->accessToken);
+				headers.push_back("Content-Type: application/json");
+
+				nlohmann::json valueRange = {
+					{"range", range},
+					{"values", nlohmann::json::array({nlohmann::json::array({trxRow.transaction->subject})})}};
+
+				mp_requester->putRequest(url, headers, valueRange.dump());
+			}
+
+			// Update amount to 0 (column D)
+			{
+				std::string range = "Transactions!D" + std::to_string(trxRow.row) + ":D" + std::to_string(trxRow.row);
+				std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" + spreadsheetId + "/values/" + range + "?valueInputOption=USER_ENTERED&includeValuesInResponse=0";
+
+				std::vector<std::string> headers;
+				headers.push_back("Authorization: Bearer " + mp_token->accessToken);
+				headers.push_back("Content-Type: application/json");
+
+				nlohmann::json valueRange = {
+					{"range", range},
+					{"values", nlohmann::json::array({nlohmann::json::array({"0"})})}};
+
+				mp_requester->putRequest(url, headers, valueRange.dump());
+			}
+		}
+	}
+
+	void Client::setCategoriesInSheet(const std::vector<TransactionRow> &transactionRows)
+	{
+		if (mp_requester == nullptr)
+		{
+			throw std::runtime_error("requester is null");
+		}
+
+		if (mp_token == nullptr)
+		{
+			throw std::runtime_error("token is null");
+		}
+
+		std::string spreadsheetId = "1cK1dA50bW6_AyRA2ScDozwVg3IB_lHwBIP1xAqNwjXw";
+
+		for (const auto &trxRow : transactionRows)
+		{
+			// Update category (column F)
+			std::string range = "Transactions!F" + std::to_string(trxRow.row) + ":F" + std::to_string(trxRow.row);
+			std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" + spreadsheetId + "/values/" + range + "?valueInputOption=USER_ENTERED&includeValuesInResponse=0";
+
+			std::vector<std::string> headers;
+			headers.push_back("Authorization: Bearer " + mp_token->accessToken);
+			headers.push_back("Content-Type: application/json");
+
+			nlohmann::json valueRange = {
+				{"range", range},
+				{"values", nlohmann::json::array({nlohmann::json::array({trxRow.transaction->category})})}};
+
+			mp_requester->putRequest(url, headers, valueRange.dump());
+		}
+	}
 }

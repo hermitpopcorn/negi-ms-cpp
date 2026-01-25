@@ -16,12 +16,25 @@ target_include_directories(reporter PUBLIC "src/")
 target_link_libraries(reporter PRIVATE commonlib)
 target_link_libraries(reporter PRIVATE curl nlohmann_json::nlohmann_json)
 
+# marksman modules library
+file(GLOB_RECURSE marksman_lib_FILES "src/marksman/duplifinder.cpp" "src/marksman/categorizer.cpp")
+add_library(marksman_lib STATIC ${marksman_lib_FILES})
+target_include_directories(marksman_lib PUBLIC "src/")
+target_link_libraries(marksman_lib PRIVATE curl nlohmann_json::nlohmann_json)
+
+# marksman executable
+file(GLOB marksman_main_FILES "src/marksman/main.cpp")
+add_executable(marksman ${marksman_main_FILES})
+target_include_directories(marksman PUBLIC "src/")
+target_link_libraries(marksman PRIVATE commonlib marksman_lib)
+target_link_libraries(marksman PRIVATE curl nlohmann_json::nlohmann_json)
+
 # test
 enable_testing()
 file(GLOB_RECURSE tests_FILES "test/*.cpp")
 add_executable(tests ${tests_FILES})
 target_include_directories(tests PUBLIC "src/")
 target_include_directories(tests PUBLIC "test/")
-target_link_libraries(tests PRIVATE commonlib)
+target_link_libraries(tests PRIVATE commonlib marksman_lib)
 find_package(GTest CONFIG REQUIRED)
 target_link_libraries(tests PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
