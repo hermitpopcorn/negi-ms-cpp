@@ -55,6 +55,10 @@ void setCategories(sheet::Client &client, const std::vector<sheet::Transaction> 
 
 int main()
 {
+    char *sheetId = std::getenv("SHEET_ID");
+    if (sheetId == nullptr)
+        throw std::runtime_error("SHEET_ID not found in env");
+
     curl_global_init(CURL_GLOBAL_DEFAULT);
 
     try
@@ -63,6 +67,7 @@ int main()
         auto shellExec = std::make_shared<external::ShellExec>();
 
         sheet::Client client(requester, shellExec);
+        client.setSheetId(sheetId);
 
         auto sheetValues = client.getTransactions();
         std::cout << "Fetched " << sheetValues.size() << " transactions from Google Sheets" << std::endl;

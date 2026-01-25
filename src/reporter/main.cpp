@@ -17,6 +17,9 @@ int main(int argc, char *argv[])
     char *discordChannelId = std::getenv("DISCORD_CHANNEL_ID");
     if (discordChannelId == nullptr)
         throw std::runtime_error("DISCORD_CHANNEL_ID not found in env");
+    char *sheetId = std::getenv("SHEET_ID");
+    if (sheetId == nullptr)
+        throw std::runtime_error("SHEET_ID not found in env");
 
     uint hours = 24 * 7;
     if (argc >= 2)
@@ -35,6 +38,7 @@ int main(int argc, char *argv[])
         auto requester = std::make_shared<network::Requester>();
         auto exec = std::make_shared<external::ShellExec>();
         sheet::Client client(requester, exec);
+        client.setSheetId(sheetId);
         auto transactions = client.getTransactions();
 
         // Sort (newest first)

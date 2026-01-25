@@ -24,7 +24,7 @@ namespace sheet
 	}
 
 	Client::Client(std::shared_ptr<network::RequesterInterface> p_requester, std::shared_ptr<external::ExecInterface> p_exec)
-		: mp_requester(std::move(p_requester)), mp_exec(std::move(p_exec)), mp_token(nullptr)
+		: mp_requester(std::move(p_requester)), mp_exec(std::move(p_exec)), mp_token(nullptr), m_sheetId("")
 	{
 		if (mp_requester == nullptr)
 		{
@@ -36,6 +36,11 @@ namespace sheet
 	Client::~Client()
 	{
 		deleteToken();
+	}
+
+	void Client::setSheetId(const std::string &sheetId)
+	{
+		m_sheetId = sheetId;
 	}
 
 	void Client::deleteToken()
@@ -66,12 +71,11 @@ namespace sheet
 
 		auto fetchTransactionJson = [this]() -> std::string
 		{
-			std::string spreadsheetId = "1cK1dA50bW6_AyRA2ScDozwVg3IB_lHwBIP1xAqNwjXw";
 			std::string range = "Transactions!A2:F";
 			std::vector<std::string> headers;
 			headers.push_back("Authorization: Bearer " + mp_token->accessToken);
 			headers.push_back("Content-Type: application/json");
-			std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" + spreadsheetId + "/values/" + range + "?valueRenderOption=UNFORMATTED_VALUE";
+			std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" + m_sheetId + "/values/" + range + "?valueRenderOption=UNFORMATTED_VALUE";
 			return mp_requester->getRequest(std::move(url), std::move(headers));
 		};
 
@@ -138,14 +142,12 @@ namespace sheet
 			throw std::runtime_error("token is null");
 		}
 
-		std::string spreadsheetId = "1cK1dA50bW6_AyRA2ScDozwVg3IB_lHwBIP1xAqNwjXw";
-
 		for (const auto &trxRow : transactionRows)
 		{
 			// Update subject (column B)
 			{
 				std::string range = "Transactions!B" + std::to_string(trxRow.row) + ":B" + std::to_string(trxRow.row);
-				std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" + spreadsheetId + "/values/" + range + "?valueInputOption=USER_ENTERED&includeValuesInResponse=0";
+				std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" + m_sheetId + "/values/" + range + "?valueInputOption=USER_ENTERED&includeValuesInResponse=0";
 
 				std::vector<std::string> headers;
 				headers.push_back("Authorization: Bearer " + mp_token->accessToken);
@@ -161,7 +163,7 @@ namespace sheet
 			// Update amount to 0 (column D)
 			{
 				std::string range = "Transactions!D" + std::to_string(trxRow.row) + ":D" + std::to_string(trxRow.row);
-				std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" + spreadsheetId + "/values/" + range + "?valueInputOption=USER_ENTERED&includeValuesInResponse=0";
+				std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" + m_sheetId + "/values/" + range + "?valueInputOption=USER_ENTERED&includeValuesInResponse=0";
 
 				std::vector<std::string> headers;
 				headers.push_back("Authorization: Bearer " + mp_token->accessToken);
@@ -188,13 +190,11 @@ namespace sheet
 			throw std::runtime_error("token is null");
 		}
 
-		std::string spreadsheetId = "1cK1dA50bW6_AyRA2ScDozwVg3IB_lHwBIP1xAqNwjXw";
-
 		for (const auto &trxRow : transactionRows)
 		{
 			// Update category (column F)
 			std::string range = "Transactions!F" + std::to_string(trxRow.row) + ":F" + std::to_string(trxRow.row);
-			std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" + spreadsheetId + "/values/" + range + "?valueInputOption=USER_ENTERED&includeValuesInResponse=0";
+			std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" + m_sheetId + "/values/" + range + "?valueInputOption=USER_ENTERED&includeValuesInResponse=0";
 
 			std::vector<std::string> headers;
 			headers.push_back("Authorization: Bearer " + mp_token->accessToken);

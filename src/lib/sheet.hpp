@@ -26,6 +26,7 @@ namespace sheet
 	class ClientInterface
 	{
 	public:
+		virtual void setSheetId(const std::string &sheetId) = 0;
 		virtual std::vector<Transaction> getTransactions() = 0;
 		virtual void markDuplicatesInSheet(const std::vector<TransactionRow> &transactionRows) = 0;
 		virtual void setCategoriesInSheet(const std::vector<TransactionRow> &transactionRows) = 0;
