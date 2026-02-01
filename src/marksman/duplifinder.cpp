@@ -76,6 +76,26 @@ namespace marksman
 
                     // If the latter is marked as not duplicate, flip
                     bool flip = !currentMarkedNotDupe && nextMarkedNotDupe;
+
+                    // Check if we should flip based on time of day
+                    if (!flip)
+                    {
+                        // Extract time of day (minutes and seconds)
+                        auto currentTimeOfDay = std::chrono::duration_cast<std::chrono::seconds>(current.second.date.time_since_epoch()) % std::chrono::seconds(86400);
+                        auto nextTimeOfDay = std::chrono::duration_cast<std::chrono::seconds>(next.second.date.time_since_epoch()) % std::chrono::seconds(86400);
+
+                        auto currentMinutes = (currentTimeOfDay.count() / 60) % 60;
+                        auto currentSeconds = currentTimeOfDay.count() % 60;
+                        auto nextMinutes = (nextTimeOfDay.count() / 60) % 60;
+                        auto nextSeconds = nextTimeOfDay.count() % 60;
+
+                        // Flip if current has 00:00 and next has non-00 minutes/seconds
+                        if (currentMinutes == 0 && currentSeconds == 0 && (nextMinutes != 0 || nextSeconds != 0))
+                        {
+                            flip = true;
+                        }
+                    }
+
                     int originalRow = flip ? next.first : current.first;
                     const sheet::Transaction &duplicateTxn = flip ? current.second : next.second;
                     int duplicateRow = flip ? current.first : next.first;
