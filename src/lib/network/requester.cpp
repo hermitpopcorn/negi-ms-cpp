@@ -34,6 +34,7 @@ static std::string performBodyRequest(const std::string &url, const std::vector<
     curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, writeCallback);
     curl_easy_setopt(curlHandle, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_1_1);
     curl_easy_setopt(curlHandle, CURLOPT_POSTFIELDS, body.c_str());
+    curl_easy_setopt(curlHandle, CURLOPT_POSTFIELDSIZE, (long)body.length());
     curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &response);
 
     if (method != nullptr)

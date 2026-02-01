@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <array>
 #include "lib/external/exec.hpp"
+#include <algorithm>
 
 #define EXEC_OK (0)
 
@@ -51,6 +52,9 @@ namespace external
         {
             throw std::runtime_error("oauth2 failed (" + std::to_string(result.first) + "): " + result.second);
         }
+
+        result.second.erase(std::remove(result.second.begin(), result.second.end(), '\n'), result.second.end());
+        result.second.erase(std::remove(result.second.begin(), result.second.end(), '\r'), result.second.end());
 
         return result.second;
     }
