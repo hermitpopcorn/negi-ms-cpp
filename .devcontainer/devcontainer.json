@@ -9,7 +9,13 @@
 		"ghcr.io/devcontainers-extra/features/curl-apt-get:1": {},
 		"ghcr.io/devcontainers-community/features/llvm:3": {
 			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "24"
 		}
+	},
+
+	"postCreateCommand": "corepack enable pnpm && COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm -v"
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
