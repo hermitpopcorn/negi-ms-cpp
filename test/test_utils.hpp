@@ -4,7 +4,8 @@
 #include <ctime>
 
 // Helper function to create time points for testing
-inline std::chrono::system_clock::time_point makeTimePoint(int year, int month, int day, int hour = 0, int minute = 0, int second = 0)
+inline std::chrono::system_clock::time_point
+makeTimePoint(int year, int month, int day, int hour = 0, int minute = 0, int second = 0)
 {
     std::tm t = {};
     t.tm_year = year - 1900;

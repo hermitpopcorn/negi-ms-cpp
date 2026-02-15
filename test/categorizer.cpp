@@ -1,7 +1,10 @@
+#include "marksman/categorizer.hpp"
+
 #include <gtest/gtest.h>
 #include <memory>
-#include "marksman/categorizer.hpp"
+
 #include "lib/sheet.hpp"
+
 #include "test_utils.hpp"
 
 const std::string MOCK_CATEGORY_MAP = R"(関西電力,Services
@@ -12,20 +15,12 @@ STEAMGAMES.COM,Games
 
 class CategorizerTest : public ::testing::Test
 {
-protected:
+  protected:
     // Helper to create a transaction
-    sheet::Transaction createTransaction(
-        const std::string &account,
-        const std::string &subject,
-        const std::string &category = "")
+    sheet::Transaction createTransaction(const std::string &account, const std::string &subject,
+                                         const std::string &category = "")
     {
-        return {
-            account,
-            subject,
-            makeTimePoint(2026, 1, 25, 12, 0, 0),
-            10000,
-            "JPY",
-            category};
+        return {account, subject, makeTimePoint(2026, 1, 25, 12, 0, 0), 10000, "JPY", category};
     }
 };
 
@@ -124,8 +119,7 @@ TEST_F(CategorizerTest, DoesNotMatchTransactionWithNoKeyword)
 
 TEST_F(CategorizerTest, SkipsTransactionWithEmptySubject)
 {
-    std::vector<sheet::Transaction> transactions = {
-        createTransaction("Account1", "")};
+    std::vector<sheet::Transaction> transactions = {createTransaction("Account1", "")};
 
     auto categoryMap = marksman::parseCategoryMap(MOCK_CATEGORY_MAP);
     auto result = marksman::matchSubjectToCategories(transactions, categoryMap);
@@ -193,7 +187,7 @@ TEST_F(CategorizerTest, MatchesFirstKeywordFound)
 TEST_F(CategorizerTest, CaseSensitiveMatching)
 {
     std::vector<sheet::Transaction> transactions = {
-        createTransaction("Account1", "Payment to steamgames.com") // lowercase
+        createTransaction("Account1", "Payment to steamgames.com")  // lowercase
     };
 
     auto categoryMap = marksman::parseCategoryMap(MOCK_CATEGORY_MAP);
@@ -217,11 +211,11 @@ TEST_F(CategorizerTest, HandlesEmptyCategoryMap)
 TEST_F(CategorizerTest, CorrectRowNumbersWithSkips)
 {
     std::vector<sheet::Transaction> transactions = {
-        createTransaction("Account1", "Payment to 関西電力"),      // Row 2 - matches
-        createTransaction("Account1", "Random payment"),           // Row 3 - no match
-        createTransaction("Account1", "Buy from 喜久屋書店"),      // Row 4 - matches
-        createTransaction("Account1", "Another random payment"),   // Row 5 - no match
-        createTransaction("Account1", "Lunch at デイリーヤマザキ") // Row 6 - matches
+        createTransaction("Account1", "Payment to 関西電力"),       // Row 2 - matches
+        createTransaction("Account1", "Random payment"),            // Row 3 - no match
+        createTransaction("Account1", "Buy from 喜久屋書店"),       // Row 4 - matches
+        createTransaction("Account1", "Another random payment"),    // Row 5 - no match
+        createTransaction("Account1", "Lunch at デイリーヤマザキ")  // Row 6 - matches
     };
 
     auto categoryMap = marksman::parseCategoryMap(MOCK_CATEGORY_MAP);
@@ -239,7 +233,8 @@ TEST_F(CategorizerTest, CorrectRowNumbersWithSkips)
 TEST_F(CategorizerTest, PartialKeywordMatch)
 {
     std::vector<sheet::Transaction> transactions = {
-        createTransaction("Account1", "電力 related payment") // Contains "電力" which is part of "関西電力"
+        createTransaction("Account1",
+                          "電力 related payment")  // Contains "電力" which is part of "関西電力"
     };
 
     auto categoryMap = marksman::parseCategoryMap(MOCK_CATEGORY_MAP);

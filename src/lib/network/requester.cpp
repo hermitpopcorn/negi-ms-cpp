@@ -1,7 +1,8 @@
-#include <string>
-#include <sstream>
-#include <curl/curl.h>
 #include "lib/network/requester.hpp"
+
+#include <curl/curl.h>
+#include <sstream>
+#include <string>
 
 static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
@@ -13,7 +14,9 @@ static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *use
     return real_size;
 }
 
-static std::string performBodyRequest(const std::string &url, const std::vector<std::string> &headers, const std::string &body, const char *method)
+static std::string performBodyRequest(const std::string &url,
+                                      const std::vector<std::string> &headers,
+                                      const std::string &body, const char *method)
 {
     CURL *curlHandle = curl_easy_init();
 
@@ -73,11 +76,10 @@ namespace network
         curl_global_init(CURL_GLOBAL_DEFAULT);
     }
 
-    Requester::~Requester()
-    {
-    }
+    Requester::~Requester() {}
 
-    std::string Requester::getRequest(const std::string &url, const std::vector<std::string> &headers)
+    std::string Requester::getRequest(const std::string &url,
+                                      const std::vector<std::string> &headers)
     {
         CURL *curlHandle = curl_easy_init();
 
@@ -113,13 +115,17 @@ namespace network
         return response.str();
     }
 
-    std::string Requester::postRequest(const std::string &url, const std::vector<std::string> &headers, const std::string &body)
+    std::string Requester::postRequest(const std::string &url,
+                                       const std::vector<std::string> &headers,
+                                       const std::string &body)
     {
         return performBodyRequest(url, headers, body, "POST");
     }
 
-    std::string Requester::putRequest(const std::string &url, const std::vector<std::string> &headers, const std::string &body)
+    std::string Requester::putRequest(const std::string &url,
+                                      const std::vector<std::string> &headers,
+                                      const std::string &body)
     {
         return performBodyRequest(url, headers, body, "PUT");
     }
-}
+}  // namespace network

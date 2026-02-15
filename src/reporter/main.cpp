@@ -1,12 +1,13 @@
-#include <iostream>
-#include <curl/curl.h>
-#include <time.h>
 #include <algorithm>
+#include <curl/curl.h>
+#include <iostream>
 #include <map>
+#include <time.h>
 
+#include "lib/external/exec.hpp"
 #include "lib/network/requester.hpp"
 #include "lib/sheet/client.hpp"
-#include "lib/external/exec.hpp"
+
 #include "discord.hpp"
 
 int main(int argc, char *argv[])
@@ -42,8 +43,8 @@ int main(int argc, char *argv[])
         auto transactions = client.getTransactions();
 
         // Sort (newest first)
-        std::sort(transactions.begin(), transactions.end(), [](sheet::Transaction a, sheet::Transaction b)
-                  { return a.date > b.date; });
+        std::sort(transactions.begin(), transactions.end(),
+                  [](sheet::Transaction a, sheet::Transaction b) { return a.date > b.date; });
 
         // Get transactions of the past week
         int endIndex;

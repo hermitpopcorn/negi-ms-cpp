@@ -1,16 +1,18 @@
+#include "duplifinder.hpp"
+
 #include <algorithm>
 #include <cmath>
-#include <memory>
 #include <map>
-#include "duplifinder.hpp"
+#include <memory>
 
 namespace marksman
 {
-    std::vector<sheet::TransactionRow> findPossibleDuplicates(const std::vector<sheet::Transaction> &transactions)
+    std::vector<sheet::TransactionRow>
+    findPossibleDuplicates(const std::vector<sheet::Transaction> &transactions)
     {
         // Create a vector of pairs with row numbers and copies of transactions
         std::vector<std::pair<int, sheet::Transaction>> txnsWithRows;
-        int rowNumber = 2; // Start from row 2 (A2)
+        int rowNumber = 2;  // Start from row 2 (A2)
         for (const auto &trx : transactions)
         {
             // Skip ones already marked as duplicate
@@ -35,9 +37,7 @@ namespace marksman
         {
             std::sort(pair.second.begin(), pair.second.end(),
                       [&txnsWithRows](size_t a, size_t b)
-                      {
-                          return txnsWithRows[a].second.date < txnsWithRows[b].second.date;
-                      });
+                      { return txnsWithRows[a].second.date < txnsWithRows[b].second.date; });
         }
 
         // Find possible duplicates
@@ -66,8 +66,10 @@ namespace marksman
                 if (std::abs(daysDiff) <= 2 && account1 == account2)
                 {
                     // Skip if both marked as not duplicate
-                    bool currentMarkedNotDupe = !current.second.subject.empty() && current.second.subject[0] == '!';
-                    bool nextMarkedNotDupe = !next.second.subject.empty() && next.second.subject[0] == '!';
+                    bool currentMarkedNotDupe =
+                        !current.second.subject.empty() && current.second.subject[0] == '!';
+                    bool nextMarkedNotDupe =
+                        !next.second.subject.empty() && next.second.subject[0] == '!';
 
                     if (currentMarkedNotDupe && nextMarkedNotDupe)
                     {
@@ -81,8 +83,12 @@ namespace marksman
                     if (!flip)
                     {
                         // Extract time of day (minutes and seconds)
-                        auto currentTimeOfDay = std::chrono::duration_cast<std::chrono::seconds>(current.second.date.time_since_epoch()) % std::chrono::seconds(86400);
-                        auto nextTimeOfDay = std::chrono::duration_cast<std::chrono::seconds>(next.second.date.time_since_epoch()) % std::chrono::seconds(86400);
+                        auto currentTimeOfDay = std::chrono::duration_cast<std::chrono::seconds>(
+                                                    current.second.date.time_since_epoch()) %
+                                                std::chrono::seconds(86400);
+                        auto nextTimeOfDay = std::chrono::duration_cast<std::chrono::seconds>(
+                                                 next.second.date.time_since_epoch()) %
+                                             std::chrono::seconds(86400);
 
                         auto currentMinutes = (currentTimeOfDay.count() / 60) % 60;
                         auto currentSeconds = currentTimeOfDay.count() % 60;
@@ -90,7 +96,8 @@ namespace marksman
                         auto nextSeconds = nextTimeOfDay.count() % 60;
 
                         // Flip if current has 00:00 and next has non-00 minutes/seconds
-                        if (currentMinutes == 0 && currentSeconds == 0 && (nextMinutes != 0 || nextSeconds != 0))
+                        if (currentMinutes == 0 && currentSeconds == 0 &&
+                            (nextMinutes != 0 || nextSeconds != 0))
                         {
                             flip = true;
                         }
@@ -106,7 +113,8 @@ namespace marksman
                     {
                         originalSubject = " " + originalSubject;
                     }
-                    clonedDuplicate->subject = "?dupof(" + std::to_string(originalRow) + ")" + originalSubject;
+                    clonedDuplicate->subject =
+                        "?dupof(" + std::to_string(originalRow) + ")" + originalSubject;
 
                     possibleDuplicates.push_back({clonedDuplicate, duplicateRow});
                 }
@@ -115,4 +123,4 @@ namespace marksman
 
         return possibleDuplicates;
     }
-}
+}  // namespace marksman

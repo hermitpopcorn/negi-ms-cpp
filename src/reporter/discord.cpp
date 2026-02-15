@@ -1,7 +1,9 @@
-#include <iostream>
-#include <vector>
-#include <nlohmann/json.hpp>
 #include "discord.hpp"
+
+#include <iostream>
+#include <nlohmann/json.hpp>
+#include <vector>
+
 #include "lib/network.hpp"
 
 namespace reporter
@@ -24,4 +26,4 @@ namespace reporter
 
         mp_requester->postRequest(url, headers, body.dump());
     }
-}
+}  // namespace reporter

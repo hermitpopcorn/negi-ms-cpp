@@ -1,20 +1,21 @@
 #pragma once
 
-#include <string>
 #include <memory>
+#include <string>
+
 #include "lib/network.hpp"
 
 namespace reporter
 {
     class Discord
     {
-    private:
+      private:
         std::shared_ptr<network::RequesterInterface> mp_requester;
         std::string m_botToken;
 
-    public:
+      public:
         Discord(std::shared_ptr<network::RequesterInterface> p_requester, std::string botToken);
 
         void sendMessage(std::string channelId, std::string content);
     };
-}
+}  // namespace reporter

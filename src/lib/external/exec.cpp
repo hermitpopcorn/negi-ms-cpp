@@ -1,7 +1,8 @@
-#include <stdexcept>
-#include <array>
 #include "lib/external/exec.hpp"
+
 #include <algorithm>
+#include <array>
+#include <stdexcept>
 
 #define EXEC_OK (0)
 
@@ -50,12 +51,15 @@ namespace external
         std::pair<int, std::string> result = execCommand(command);
         if (result.first != EXEC_OK)
         {
-            throw std::runtime_error("oauth2 failed (" + std::to_string(result.first) + "): " + result.second);
+            throw std::runtime_error("oauth2 failed (" + std::to_string(result.first) +
+                                     "): " + result.second);
         }
 
-        result.second.erase(std::remove(result.second.begin(), result.second.end(), '\n'), result.second.end());
-        result.second.erase(std::remove(result.second.begin(), result.second.end(), '\r'), result.second.end());
+        result.second.erase(std::remove(result.second.begin(), result.second.end(), '\n'),
+                            result.second.end());
+        result.second.erase(std::remove(result.second.begin(), result.second.end(), '\r'),
+                            result.second.end());
 
         return result.second;
     }
-}
+}  // namespace external

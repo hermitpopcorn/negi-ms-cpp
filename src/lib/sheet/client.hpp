@@ -1,15 +1,16 @@
 #pragma once
 
 #include <memory>
-#include "lib/sheet.hpp"
-#include "lib/network.hpp"
+
 #include "lib/external.hpp"
+#include "lib/network.hpp"
+#include "lib/sheet.hpp"
 
 namespace sheet
 {
     class Client : public ClientInterface
     {
-    private:
+      private:
         std::shared_ptr<network::RequesterInterface> mp_requester;
         std::shared_ptr<external::ExecInterface> mp_exec;
         struct Token *mp_token;
@@ -17,8 +18,9 @@ namespace sheet
         void getToken();
         void deleteToken();
 
-    public:
-        Client(std::shared_ptr<network::RequesterInterface> p_requester, std::shared_ptr<external::ExecInterface> p_exec);
+      public:
+        Client(std::shared_ptr<network::RequesterInterface> p_requester,
+               std::shared_ptr<external::ExecInterface> p_exec);
         ~Client();
 
         void setSheetId(const std::string &sheetId) override;
@@ -26,4 +28,4 @@ namespace sheet
         void markDuplicatesInSheet(const std::vector<TransactionRow> &transactionRows) override;
         void setCategoriesInSheet(const std::vector<TransactionRow> &transactionRows) override;
     };
-}
+}  // namespace sheet

@@ -1,19 +1,22 @@
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "lib/sheet/client.hpp"
-#include "lib/network/requester.hpp"
+#include <gtest/gtest.h>
+
 #include "lib/external/exec.hpp"
+#include "lib/network/requester.hpp"
+#include "lib/sheet/client.hpp"
+
 #include "test_utils.hpp"
 
 class MockRequester : public network::Requester
 {
-public:
-    MOCK_METHOD(std::string, getRequest, (const std::string &url, const std::vector<std::string> &headers), ());
+  public:
+    MOCK_METHOD(std::string, getRequest,
+                (const std::string &url, const std::vector<std::string> &headers), ());
 };
 
 class MockExec : public external::ShellExec
 {
-public:
+  public:
     MOCK_METHOD(std::string, googleOAuth, (const std::string &scopes), ());
 };
 
@@ -26,9 +29,12 @@ TEST(Sheet, ClientGetTransactions)
         .Times(testing::Exactly(1))
         .WillRepeatedly(testing::Return("test-access-token"));
 
-    EXPECT_CALL(*mockedRequester, getRequest(testing::_, testing::Contains("Authorization: Bearer test-access-token")))
+    EXPECT_CALL(
+        *mockedRequester,
+        getRequest(testing::_, testing::Contains("Authorization: Bearer test-access-token")))
         .Times(testing::Exactly(1))
-        .WillRepeatedly(testing::Return("{ \"values\": [[\"account\", \"subject\", 45658.0, 250000, \"IDR\", \"category\"]] }"));
+        .WillRepeatedly(testing::Return("{ \"values\": [[\"account\", \"subject\", 45658.0, "
+                                        "250000, \"IDR\", \"category\"]] }"));
 
     auto client = sheet::Client(mockedRequester, mockedExec);
     std::vector<sheet::Transaction> trxs = client.getTransactions();
@@ -48,14 +54,12 @@ TEST(Sheet, GoogleSheetsDateTimeParsing)
     auto mockedRequester = std::make_shared<MockRequester>();
     auto mockedExec = std::make_shared<MockExec>();
 
-    EXPECT_CALL(*mockedExec, googleOAuth)
-        .WillRepeatedly(testing::Return("test-token"));
+    EXPECT_CALL(*mockedExec, googleOAuth).WillRepeatedly(testing::Return("test-token"));
 
     // 45657.5 = 2024-12-31 12:00:00
     // 45658.25 = 2025-01-01 06:00:00
     // 45659.75 = 2025-01-02 18:00:00
-    EXPECT_CALL(*mockedRequester, getRequest(testing::_, testing::_))
-        .WillOnce(testing::Return(R"({
+    EXPECT_CALL(*mockedRequester, getRequest(testing::_, testing::_)).WillOnce(testing::Return(R"({
             "values": [
                 ["Account1", "Subject1", 45657.5, 100000, "IDR", "Food"],
                 ["Account2", "Subject2", 45658.25, 250000, "IDR", "Transport"],

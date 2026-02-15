@@ -1,9 +1,10 @@
+#include "categorizer.hpp"
+
+#include <cstdlib>
 #include <fstream>
-#include <sstream>
 #include <map>
 #include <memory>
-#include <cstdlib>
-#include "categorizer.hpp"
+#include <sstream>
 
 namespace marksman
 {
@@ -19,7 +20,8 @@ namespace marksman
         std::ifstream file(categoryMapPath);
         if (!file.is_open())
         {
-            throw std::runtime_error(std::string("Could not open category map file: ") + categoryMapPath);
+            throw std::runtime_error(std::string("Could not open category map file: ") +
+                                     categoryMapPath);
         }
 
         std::stringstream buffer;
@@ -67,13 +69,13 @@ namespace marksman
         return categoryMap;
     }
 
-    std::vector<sheet::TransactionRow> matchSubjectToCategories(
-        const std::vector<sheet::Transaction> &transactions,
-        const std::map<std::string, std::string> &categoryMap)
+    std::vector<sheet::TransactionRow>
+    matchSubjectToCategories(const std::vector<sheet::Transaction> &transactions,
+                             const std::map<std::string, std::string> &categoryMap)
     {
         std::vector<sheet::TransactionRow> matchedValues;
 
-        int rowNumber = 2; // Start from row 2 (A2)
+        int rowNumber = 2;  // Start from row 2 (A2)
         for (const auto &trx : transactions)
         {
             // Skip if already has category or no subject
@@ -107,4 +109,4 @@ namespace marksman
 
         return matchedValues;
     }
-}
+}  // namespace marksman

@@ -1,14 +1,16 @@
+#include <chrono>
+#include <curl/curl.h>
+#include <iomanip>
 #include <iostream>
 #include <memory>
-#include <curl/curl.h>
-#include <chrono>
-#include <iomanip>
 #include <sstream>
-#include "lib/sheet/client.hpp"
-#include "lib/network/requester.hpp"
+
 #include "lib/external/exec.hpp"
-#include "duplifinder.hpp"
+#include "lib/network/requester.hpp"
+#include "lib/sheet/client.hpp"
+
 #include "categorizer.hpp"
+#include "duplifinder.hpp"
 
 std::string getCurrentTimestampUTC()
 {
@@ -25,7 +27,8 @@ void markDuplicates(sheet::Client &client, const std::vector<sheet::Transaction>
 {
     auto possibleDuplicates = marksman::findPossibleDuplicates(values);
 
-    std::cout << getCurrentTimestampUTC() << " Found " << possibleDuplicates.size() << " possible duplicates" << std::endl;
+    std::cout << getCurrentTimestampUTC() << " Found " << possibleDuplicates.size()
+              << " possible duplicates" << std::endl;
 
     if (possibleDuplicates.empty())
     {
@@ -35,7 +38,8 @@ void markDuplicates(sheet::Client &client, const std::vector<sheet::Transaction>
     try
     {
         client.markDuplicatesInSheet(possibleDuplicates);
-        std::cout << getCurrentTimestampUTC() << " Marked all of them as possible duplicates" << std::endl;
+        std::cout << getCurrentTimestampUTC() << " Marked all of them as possible duplicates"
+                  << std::endl;
     }
     catch (const std::exception &e)
     {
@@ -49,7 +53,8 @@ void setCategories(sheet::Client &client, const std::vector<sheet::Transaction> 
     auto categoryMap = marksman::parseCategoryMap(categoryMapCsv);
     auto matchedValues = marksman::matchSubjectToCategories(values, categoryMap);
 
-    std::cout << getCurrentTimestampUTC() << " Found " << matchedValues.size() << " subject-to-category matches" << std::endl;
+    std::cout << getCurrentTimestampUTC() << " Found " << matchedValues.size()
+              << " subject-to-category matches" << std::endl;
 
     if (matchedValues.empty())
     {
@@ -59,7 +64,8 @@ void setCategories(sheet::Client &client, const std::vector<sheet::Transaction> 
     try
     {
         client.setCategoriesInSheet(matchedValues);
-        std::cout << getCurrentTimestampUTC() << " Marked the categories for all of them" << std::endl;
+        std::cout << getCurrentTimestampUTC() << " Marked the categories for all of them"
+                  << std::endl;
     }
     catch (const std::exception &e)
     {
@@ -84,7 +90,8 @@ int main()
         client.setSheetId(sheetId);
 
         auto sheetValues = client.getTransactions();
-        std::cout << getCurrentTimestampUTC() << " Fetched " << sheetValues.size() << " transactions from Google Sheets" << std::endl;
+        std::cout << getCurrentTimestampUTC() << " Fetched " << sheetValues.size()
+                  << " transactions from Google Sheets" << std::endl;
 
         markDuplicates(client, sheetValues);
         setCategories(client, sheetValues);

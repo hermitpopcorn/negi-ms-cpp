@@ -6,8 +6,8 @@ namespace external
 {
     class ShellExec : public ExecInterface
     {
-    public:
+      public:
         std::pair<int, std::string> execCommand(const std::string &command) override;
         std::string googleOAuth(const std::string &scopes) override;
     };
-}
+}  // namespace external
