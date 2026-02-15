@@ -75,7 +75,6 @@
         "valarray": "cpp",
         "variant": "cpp"
     },
-    "editor.formatOnSave": true,
     "rust-analyzer.linkedProjects": [
         "src/google-oauth2/Cargo.toml"
     ],

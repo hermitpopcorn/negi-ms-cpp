@@ -18,8 +18,8 @@ namespace sheet
 
         // Google Sheets uses 1899-12-30 as Day 0
         // 1899-12-30 to 1970-1-1 = 25569 days
-        int daysSinceEpoch = integral - 25569;
-        int minutes = fraction * (24 * 60);
+        int daysSinceEpoch = static_cast<int>(integral - 25569);
+        int minutes = static_cast<int>(fraction * (24 * 60));
 
         auto sinceEpoch = std::chrono::hours(daysSinceEpoch * 24) + std::chrono::minutes(minutes);
         return std::chrono::time_point<std::chrono::system_clock>(sinceEpoch);

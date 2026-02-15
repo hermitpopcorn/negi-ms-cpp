@@ -9,7 +9,7 @@ static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *use
     size_t real_size = size * nmemb;
 
     std::stringstream *ss = static_cast<std::stringstream *>(userp);
-    ss->write(static_cast<char *>(contents), real_size);
+    ss->write(static_cast<char *>(contents), static_cast<std::streamsize>(real_size));
 
     return real_size;
 }

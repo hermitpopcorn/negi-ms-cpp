@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     uint hours = 24 * 7;
     if (argc >= 2)
     {
-        hours = std::stoi(argv[1]);
+        hours = static_cast<uint>(std::stoul(argv[1]));
     }
 
     curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
                   [](sheet::Transaction a, sheet::Transaction b) { return a.date > b.date; });
 
         // Get transactions of the past week
-        int endIndex;
+        std::size_t endIndex;
         for (endIndex = 0; endIndex < transactions.size(); ++endIndex)
         {
             if (transactions[endIndex].date < oneWeekAgo)
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
         using TotalsByCategory = std::map<std::string, TotalsByCurrency>;
         TotalsByCategory totals;
         {
-            for (int i = 0; i < endIndex; ++i)
+            for (std::size_t i = 0; i < endIndex; ++i)
             {
                 const auto &t = transactions[i];
                 if (totals.count(t.category) == 0)
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
             std::string from = std::to_string(numeric);
             std::string to = "";
             int c = 0;
-            for (int i = from.size(); i >= 0; --i)
+            for (std::size_t i = from.size(); i >= 0; --i)
             {
                 to.insert(0, 1, from[i]);
                 if (++c > 3 && i != 0)

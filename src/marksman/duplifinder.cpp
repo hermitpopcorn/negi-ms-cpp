@@ -35,8 +35,7 @@ namespace marksman
         // Sort each group by date
         for (auto &pair : groupedByAmount)
         {
-            std::sort(pair.second.begin(), pair.second.end(),
-                      [&txnsWithRows](size_t a, size_t b)
+            std::sort(pair.second.begin(), pair.second.end(), [&txnsWithRows](size_t a, size_t b)
                       { return txnsWithRows[a].second.date < txnsWithRows[b].second.date; });
         }
 
@@ -54,7 +53,7 @@ namespace marksman
                 // Convert to seconds first, then to days
                 auto secondsDiff = std::chrono::duration_cast<std::chrono::seconds>(timeDiff);
                 // Use ceiling division to properly account for partial days
-                int daysDiff = (secondsDiff.count() + 86399) / (24 * 3600);
+                long daysDiff = (secondsDiff.count() + 86399) / (24 * 3600);
 
                 std::string account1 = current.second.account;
                 std::string account2 = next.second.account;
