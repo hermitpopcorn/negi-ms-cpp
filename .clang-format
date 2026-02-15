@@ -1,0 +1,72 @@
+---
+# Clang-Format configuration for negi-ms-cpp project
+# Based on LLVM coding standards with some modifications for project style
+
+BasedOnStyle: LLVM
+Standard: c++17
+
+# Indentation
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+IndentCaseLabels: true
+IndentGotoLabels: true
+
+# Line length and wrapping
+ColumnLimit: 100
+ContinuationIndentWidth: 4
+BreakBeforeBraces: Allman
+
+# Spaces
+SpaceAfterCStyleCast: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 2
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# Pointers and references
+DerivePointerAlignment: false
+PointerAlignment: Right
+
+# Function formatting
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: true
+AlwaysBreakTemplateDeclarations: MultiLine
+
+# Comments
+ReflowComments: true
+CommentPragmas: '^ IWYU pragma:|^ NOLINT'
+
+# Includes
+SortIncludes: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^"lib/'
+    Priority: 2
+  - Regex: '^<[a-z]'
+    Priority: 1
+  - Regex: '^<[A-Z]'
+    Priority: 3
+
+# Constructors and destructors
+BreakConstructorInitializers: BeforeColon
+BreakInheritanceList: BeforeColon
+
+# Other
+SortUsingDeclarations: true
+NamespaceIndentation: All
+FixNamespaceComments: true
+UseCRLF: false
