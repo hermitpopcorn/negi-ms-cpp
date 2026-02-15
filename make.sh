@@ -9,3 +9,8 @@ pushd src/google-oauth2
 cargo build --release
 popd
 cp src/google-oauth2/target/release/google-oauth2 ./build/
+
+pushd src/clerk-fe
+pnpm install && pnpm run build
+popd
+rm -rf build/clerk-fe; cp -r src/clerk-fe/dist build/clerk-fe
