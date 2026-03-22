@@ -32,5 +32,6 @@ namespace sheet
         virtual std::vector<Transaction> getTransactions() = 0;
         virtual void markDuplicatesInSheet(const std::vector<TransactionRow> &transactionRows) = 0;
         virtual void setCategoriesInSheet(const std::vector<TransactionRow> &transactionRows) = 0;
+        virtual void addTransaction(const Transaction &transaction) = 0;
     };
 }  // namespace sheet

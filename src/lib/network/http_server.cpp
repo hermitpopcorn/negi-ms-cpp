@@ -95,9 +95,24 @@ namespace network
         return running_;
     }
 
-    void HttpServer::parseHttpRequest(const std::string &rawRequest, std::string &path, std::string &method)
+    void HttpServer::parseHttpRequest(const std::string &rawRequest, std::string &path, std::string &method, std::string &body)
     {
-        std::istringstream stream(rawRequest);
+        // Find the separator between headers and body
+        size_t bodyStart = rawRequest.find("\r\n\r\n");
+        std::string headerSection = rawRequest;
+        body = "";
+
+        if (bodyStart != std::string::npos)
+        {
+            headerSection = rawRequest.substr(0, bodyStart);
+            bodyStart += 4;  // Skip past "\r\n\r\n"
+            if (bodyStart < rawRequest.length())
+            {
+                body = rawRequest.substr(bodyStart);
+            }
+        }
+
+        std::istringstream stream(headerSection);
         std::string firstLine;
         std::getline(stream, firstLine);
 
@@ -161,9 +176,10 @@ namespace network
 
             std::string method;
             std::string path;
-            parseHttpRequest(rawRequest, path, method);
+            std::string body;
+            parseHttpRequest(rawRequest, path, method, body);
 
-            HttpResponse response = handler_(path, method);
+            HttpResponse response = handler_(path, method, body);
             std::string responseBody = response.content;
             std::string contentType = response.type;
 
@@ -184,11 +200,14 @@ namespace network
 
             // Build and send response
             std::string httpResponse;
-            if (responseBody.empty())
+            if (response.code == 404)
             {
                 httpResponse = buildHttpResponse("404 Not Found", "text/html", "<h1>404 Not Found</h1>");
             }
-            else
+            else if (response.code == 401)
+            {
+                httpResponse = buildHttpResponse("401 Unauthorized", "", "");
+            } else
             {
                 httpResponse = buildHttpResponse("200 OK", contentType, responseBody);
             }

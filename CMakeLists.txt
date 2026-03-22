@@ -68,7 +68,6 @@ set(MARKSMAN_LIB_FILES
 )
 add_library(marksman_lib STATIC ${MARKSMAN_LIB_FILES})
 target_include_directories(marksman_lib PUBLIC "src/")
-target_link_libraries(marksman_lib PRIVATE curl nlohmann_json::nlohmann_json)
 
 # marksman executable
 set(MARKSMAN_MAIN_FILES
@@ -77,7 +76,15 @@ set(MARKSMAN_MAIN_FILES
 add_executable(marksman ${MARKSMAN_MAIN_FILES})
 target_include_directories(marksman PUBLIC "src/")
 target_link_libraries(marksman PRIVATE commonlib marksman_lib)
-target_link_libraries(marksman PRIVATE curl nlohmann_json::nlohmann_json)
+
+# clerk
+set(CLERK_FILES
+    src/clerk/main.cpp
+    src/lib/network/http_server.cpp
+)
+add_executable(clerk ${CLERK_FILES})
+target_link_libraries(clerk PRIVATE commonlib)
+target_link_libraries(clerk PRIVATE curl nlohmann_json::nlohmann_json)
 
 # test
 enable_testing()

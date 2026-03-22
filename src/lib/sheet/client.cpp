@@ -221,4 +221,45 @@ namespace sheet
             mp_requester->putRequest(url, headers, valueRange.dump());
         }
     }
+
+    void Client::addTransaction(const Transaction &transaction)
+    {
+        if (mp_requester == nullptr)
+        {
+            throw std::runtime_error("requester is null");
+        }
+
+        if (mp_token == nullptr)
+        {
+            throw std::runtime_error("token is null");
+        }
+
+        // Convert time_point to YYYY-MM-DD hh:mm:ss format
+        auto timeT = std::chrono::system_clock::to_time_t(transaction.date);
+        std::tm tm = *std::gmtime(&timeT);
+        char dateBuffer[32];
+        std::strftime(dateBuffer, sizeof(dateBuffer), "%Y-%m-%d %H:%M:%S", &tm);
+        std::string dateString(dateBuffer);
+
+        nlohmann::json rowValues = nlohmann::json::array({
+            transaction.account,
+            transaction.subject,
+            dateString,
+            transaction.amount,
+        });
+
+        std::string range = "Transactions!A:D";
+        std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" + m_sheetId +
+                          "/values/" + range + ":append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS";
+
+        std::vector<std::string> headers;
+        headers.push_back("Authorization: Bearer " + mp_token->accessToken);
+        headers.push_back("Content-Type: application/json");
+
+        nlohmann::json requestBody = {
+            {"values", nlohmann::json::array({rowValues})}
+        };
+
+        mp_requester->postRequest(url, headers, requestBody.dump());
+    }
 }  // namespace sheet

@@ -27,5 +27,6 @@ namespace sheet
         std::vector<Transaction> getTransactions() override;
         void markDuplicatesInSheet(const std::vector<TransactionRow> &transactionRows) override;
         void setCategoriesInSheet(const std::vector<TransactionRow> &transactionRows) override;
+        void addTransaction(const Transaction &transaction) override;
     };
 }  // namespace sheet

@@ -21,10 +21,11 @@ namespace network
     };
 
     struct HttpResponse {
+      int code;
       std::string content;
       std::string type;
     };
-    using RequestHandler = std::function<HttpResponse(const std::string &path, const std::string &method)>;
+    using RequestHandler = std::function<HttpResponse(const std::string &path, const std::string &method, const std::string &body)>;
 
     class HttpServerInterface
     {
