@@ -4,17 +4,14 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <netinet/tcp.h>
 #include <sstream>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <netinet/tcp.h>
 
 namespace network
 {
-    HttpServer::HttpServer()
-        : port_(8080), serverSocket_(-1), running_(false), handler_(nullptr)
-    {
-    }
+    HttpServer::HttpServer() : port_(8080), serverSocket_(-1), running_(false), handler_(nullptr) {}
 
     HttpServer::~HttpServer()
     {
@@ -33,7 +30,8 @@ namespace network
 
     void HttpServer::start()
     {
-        if (!handler_) {
+        if (!handler_)
+        {
             throw std::runtime_error("handler is unset");
         }
 
@@ -43,7 +41,8 @@ namespace network
             throw std::runtime_error("error creating socket");
         }
 
-        auto enableSockOpt = [this](int level, int optname) {
+        auto enableSockOpt = [this](int level, int optname)
+        {
             int opt = 1;
             if (setsockopt(serverSocket_, level, optname, &opt, sizeof(opt)) < 0)
             {
@@ -62,7 +61,8 @@ namespace network
         serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
         serverAddr.sin_port = htons(static_cast<uint16_t>(port_));
 
-        if (bind(serverSocket_, reinterpret_cast<struct sockaddr *>(&serverAddr), sizeof(serverAddr)) < 0)
+        if (bind(serverSocket_, reinterpret_cast<struct sockaddr *>(&serverAddr),
+                 sizeof(serverAddr)) < 0)
         {
             close(serverSocket_);
             serverSocket_ = -1;
@@ -95,7 +95,8 @@ namespace network
         return running_;
     }
 
-    void HttpServer::parseHttpRequest(const std::string &rawRequest, std::string &path, std::string &method, std::string &body)
+    void HttpServer::parseHttpRequest(const std::string &rawRequest, std::string &path,
+                                      std::string &method, std::string &body)
     {
         // Find the separator between headers and body
         size_t bodyStart = rawRequest.find("\r\n\r\n");
@@ -135,7 +136,8 @@ namespace network
         }
     }
 
-    std::string HttpServer::buildHttpResponse(const std::string &statusCode, const std::string &contentType,
+    std::string HttpServer::buildHttpResponse(const std::string &statusCode,
+                                              const std::string &contentType,
                                               const std::string &body)
     {
         std::ostringstream response;
@@ -159,7 +161,8 @@ namespace network
         sockaddr_in clientAddr{};
         socklen_t clientAddrLen = sizeof(clientAddr);
 
-        int clientSocket = accept(serverSocket_, reinterpret_cast<struct sockaddr *>(&clientAddr), &clientAddrLen);
+        int clientSocket =
+            accept(serverSocket_, reinterpret_cast<struct sockaddr *>(&clientAddr), &clientAddrLen);
         if (clientSocket < 0)
         {
             std::cerr << "Error accepting connection" << std::endl;
@@ -183,7 +186,8 @@ namespace network
             std::string responseBody = response.content;
             std::string contentType = response.type;
 
-            if (contentType.empty()) {
+            if (contentType.empty())
+            {
                 if (path.find(".html") != std::string::npos)
                 {
                     contentType = "text/html";
@@ -202,12 +206,14 @@ namespace network
             std::string httpResponse;
             if (response.code == 404)
             {
-                httpResponse = buildHttpResponse("404 Not Found", "text/html", "<h1>404 Not Found</h1>");
+                httpResponse =
+                    buildHttpResponse("404 Not Found", "text/html", "<h1>404 Not Found</h1>");
             }
             else if (response.code == 401)
             {
                 httpResponse = buildHttpResponse("401 Unauthorized", "", "");
-            } else
+            }
+            else
             {
                 httpResponse = buildHttpResponse("200 OK", contentType, responseBody);
             }

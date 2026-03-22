@@ -24,7 +24,9 @@ namespace network
         bool running_;
         RequestHandler handler_;
 
-        void parseHttpRequest(const std::string &rawRequest, std::string &path, std::string &method, std::string &body);
-        std::string buildHttpResponse(const std::string &statusCode, const std::string &contentType, const std::string &body);
+        void parseHttpRequest(const std::string &rawRequest, std::string &path, std::string &method,
+                              std::string &body);
+        std::string buildHttpResponse(const std::string &statusCode, const std::string &contentType,
+                                      const std::string &body);
     };
 }  // namespace network

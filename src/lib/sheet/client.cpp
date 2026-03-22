@@ -250,15 +250,14 @@ namespace sheet
 
         std::string range = "Transactions!A:D";
         std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" + m_sheetId +
-                          "/values/" + range + ":append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS";
+                          "/values/" + range +
+                          ":append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS";
 
         std::vector<std::string> headers;
         headers.push_back("Authorization: Bearer " + mp_token->accessToken);
         headers.push_back("Content-Type: application/json");
 
-        nlohmann::json requestBody = {
-            {"values", nlohmann::json::array({rowValues})}
-        };
+        nlohmann::json requestBody = {{"values", nlohmann::json::array({rowValues})}};
 
         mp_requester->postRequest(url, headers, requestBody.dump());
     }

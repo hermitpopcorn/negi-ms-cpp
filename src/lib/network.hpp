@@ -1,8 +1,8 @@
 #pragma once
 
+#include <functional>
 #include <string>
 #include <vector>
-#include <functional>
 
 namespace network
 {
@@ -20,12 +20,14 @@ namespace network
                                        const std::string &body) = 0;
     };
 
-    struct HttpResponse {
-      int code;
-      std::string content;
-      std::string type;
+    struct HttpResponse
+    {
+        int code;
+        std::string content;
+        std::string type;
     };
-    using RequestHandler = std::function<HttpResponse(const std::string &path, const std::string &method, const std::string &body)>;
+    using RequestHandler = std::function<HttpResponse(
+        const std::string &path, const std::string &method, const std::string &body)>;
 
     class HttpServerInterface
     {
